@@ -6,6 +6,7 @@ techno_no_bg.png
 RemoveBG.spec
 _pyinstaller_runtime_hook.py
 _pyinstaller_spec
+_pyinstaller_build
 screenshots
 devdairy.md
 notes.txt

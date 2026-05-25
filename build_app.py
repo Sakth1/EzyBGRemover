@@ -11,6 +11,7 @@ MODEL_NAME = "u2net.onnx"
 MODEL_DIR_IN_BUNDLE = "models"
 RUNTIME_HOOK = Path("_pyinstaller_runtime_hook.py")
 SPEC_DIR = Path("_pyinstaller_spec")
+WORK_DIR = Path("_pyinstaller_build")
 
 
 def project_root() -> Path:
@@ -65,10 +66,13 @@ def build() -> None:
     root = project_root()
     os.chdir(root)
 
-    if not ICON_PATH.exists():
-        raise FileNotFoundError(f"Icon file not found: {ICON_PATH}")
-    if not Path(ENTRYPOINT).exists():
-        raise FileNotFoundError(f"Entrypoint not found: {ENTRYPOINT}")
+    icon_path = (root / ICON_PATH).resolve()
+    entrypoint_path = (root / ENTRYPOINT).resolve()
+
+    if not icon_path.exists():
+        raise FileNotFoundError(f"Icon file not found: {icon_path}")
+    if not entrypoint_path.exists():
+        raise FileNotFoundError(f"Entrypoint not found: {entrypoint_path}")
 
     model_path = ensure_model_file()
     runtime_hook = write_runtime_hook(root)
@@ -80,10 +84,12 @@ def build() -> None:
         "PyInstaller",
         "--specpath",
         str(SPEC_DIR),
+        "--workpath",
+        str(WORK_DIR),
         "--name",
         APP_NAME,
         "--icon",
-        str(ICON_PATH),
+        str(icon_path),
         "--onefile",
         "--console",
         "-y",
@@ -99,8 +105,6 @@ def build() -> None:
         "onnxruntime",
         "--collect-data",
         "skimage",
-        "--collect-binaries",
-        "onnxruntime",
         "--hidden-import",
         "rembg",
         "--hidden-import",
@@ -115,12 +119,12 @@ def build() -> None:
         "scipy._cyutility",
         "--hidden-import",
         "skimage.morphology._skeletonize",
-        ENTRYPOINT,
+        str(entrypoint_path),
     ]
 
     print(f"Using Python: {sys.executable}")
     print(f"Bundling model: {model_path}")
-    print(f"Running command: {' '.join(command)}")
+    print(f"Running command: {' '.join(command)}\n")
 
     try:
         subprocess.run(command, check=True)
