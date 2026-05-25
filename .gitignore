@@ -4,5 +4,9 @@ wewe.spec
 uv.lock
 techno_no_bg.png
 RemoveBG.spec
+_pyinstaller_runtime_hook.py
+_pyinstaller_spec
 screenshots
 devdairy.md
+notes.txt
+__pycache__
