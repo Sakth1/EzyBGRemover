@@ -1,19 +1,25 @@
 # EzyBGRemover
 
+<p align="center">
+  <a href="https://www.python.org/"><img alt="Python 3.13+" src="https://img.shields.io/badge/Python-3.13%2B-3776AB.svg?logo=python&logoColor=white"></a>
+  <a href="https://pypi.org/project/rembg/"><img alt="rembg on PyPI" src="https://img.shields.io/pypi/v/rembg.svg?label=rembg&logo=pypi&logoColor=white"></a>
+  <a href="https://pypi.org/project/pyinstaller/"><img alt="PyInstaller on PyPI" src="https://img.shields.io/pypi/v/pyinstaller.svg?label=PyInstaller&logo=pypi&logoColor=white"></a>
+  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/License-MIT-2ea44f.svg"></a>
+</p>
 
-[![Python](https://img.shields.io/badge/python-%3E%3D3.13-blue)](https://www.python.org/)  [![rembg](https://img.shields.io/pypi/v/rembg?label=rembg)](https://pypi.org/project/rembg/)  [![pyinstaller](https://img.shields.io/pypi/v/pyinstaller?label=pyinstaller)](https://pypi.org/project/pyinstaller/)  [![Code style: black](https://img.shields.io/badge/code%20style-black-000000)](https://github.com/psf/black)
+EzyBGRemover is a small local background-removal utility for images. It accepts an image file or a folder, removes backgrounds with `rembg`, and writes transparent PNG outputs without uploading files to an external service.
 
-EzyBGRemover is a small local background-removal utility for images. It runs on your machine, processes files without uploading them to an external service, and keeps the workflow simple: provide an image or folder path, then receive transparent PNG outputs.
-
-The project is built around a Python command-line script and a reproducible PyInstaller build for a Windows console executable.
+The repository contains a Python command-line script and a PyInstaller build path for a Windows console executable named `RemoveBG.exe`.
 
 ## Contents
 
 - [Features](#features)
 - [Requirements](#requirements)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Build From Source](#build-from-source)
+- [Install From Source](#install-from-source)
+- [Use The Windows EXE](#use-the-windows-exe)
+- [Use From Source](#use-from-source)
+- [Supported Inputs](#supported-inputs)
+- [Build The EXE](#build-the-exe)
 - [Technical Notes](#technical-notes)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
@@ -22,68 +28,55 @@ The project is built around a Python command-line script and a reproducible PyIn
 ## Features
 
 - Removes image backgrounds locally with `rembg`.
-- Supports single-file processing for `.jpg` and `.png` files.
-- Supports folder processing with recursive traversal.
-- Saves processed images as transparent PNG files.
+- Processes one image file or a folder of images.
+- Recurses through nested folders.
+- Saves every result as a transparent PNG.
 - Uses predictable output names ending in `_no_bg.png`.
-- Provides a PyInstaller build script for `dist/RemoveBG.exe`.
+- Includes a PyInstaller build script for `dist/RemoveBG.exe`.
 - Bundles `u2net.onnx` into the packaged Windows executable.
 
-> [!NOTE]
-> The project depends on `rembg[cpu]`. GPU acceleration is not configured in `pyproject.toml` or the build script.
+The project depends on `rembg[cpu]`. GPU acceleration is not configured in `pyproject.toml` or `build_app.py`.
 
 ## Requirements
 
-| Requirement | Version / Notes |
+| Requirement | Version / notes |
 | --- | --- |
 | Python | `>=3.13` |
-| Package manager | `uv` |
+| Package manager | `uv`, installed with `pip` by default or the standalone installer as a fallback |
 | Background removal backend | `rembg[cpu] >= 2.0.75` |
 | Build tool | `pyinstaller >= 6.20.0` |
+| License | MIT, see [LICENSE](LICENSE) |
 
 The Python version is declared in both `pyproject.toml` and `.python-version`.
 
-## Installation
+## Install From Source
 
-### Windows Executable
-
-If a release build is published, download `RemoveBG.exe` from the repository releases page:
-
-https://github.com/Sakth1/EzyBGRemover/releases
-
-Run the executable from PowerShell or Command Prompt:
-
-```powershell
-.\RemoveBG.exe "C:\path\to\image.png"
-.\RemoveBG.exe "C:\path\to\folder"
-```
-
-`RemoveBG.exe` is a console application. Launching it from a terminal keeps progress messages and errors visible.
-
-### From Source
-
-Clone the repository first:
+Clone the repository:
 
 ```bash
 git clone https://github.com/Sakth1/EzyBGRemover.git
 cd EzyBGRemover
 ```
 
-Install `uv`, create a virtual environment, install dependencies, and run the script.
+### Install uv
 
-#### Install uv
+Install `uv` with `pip` first.
 
-The official standalone installer is preferred. Use the `pip` fallback only when the standalone installer is blocked by your environment or you already manage Python tooling through `pip`.
+```
+pip install uv
+```
 
-| Platform | Preferred installer | pip fallback |
+If `pip` is unavailable or the install fails in your environment, use the official standalone installer as the fallback.
+
+| Platform | Suggested pip install | Standalone fallback |
 | --- | --- | --- |
-| Windows PowerShell | `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 \| iex"` | `python -m pip install --user uv` |
-| Linux | `curl -LsSf https://astral.sh/uv/install.sh \| sh` | `python3 -m pip install --user uv` |
-| macOS | `curl -LsSf https://astral.sh/uv/install.sh \| sh` | `python3 -m pip install --user uv` |
+| Windows PowerShell | `python -m pip install --user uv` | `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 \| iex"` |
+| Linux | `python3 -m pip install --user uv` | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+| macOS | `python3 -m pip install --user uv` | `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
 
 Restart the terminal if `uv` is not found immediately after installation.
 
-#### Create the Environment
+### Create The Environment
 
 Windows PowerShell:
 
@@ -93,7 +86,7 @@ uv venv --python 3.13
 uv sync
 ```
 
-Linux:
+Linux and macOS:
 
 ```bash
 uv venv --python 3.13
@@ -101,57 +94,87 @@ source .venv/bin/activate
 uv sync
 ```
 
-macOS:
+## Use The Windows EXE
 
-```bash
-uv venv --python 3.13
-source .venv/bin/activate
-uv sync
+If a release build is published, download `RemoveBG.exe` from:
+
+```text
+https://github.com/Sakth1/EzyBGRemover/releases
 ```
 
-#### Run the Script
+The preferred Windows workflow is drag-and-drop:
+
+1. Open the folder that contains `RemoveBG.exe`.
+2. Drag one image or one folder of images onto `RemoveBG.exe`.
+3. Release the item on the executable.
+
+Windows launches the executable with the dropped item path as an argument, so this works the same as passing the path from a terminal.
+
+`RemoveBG.exe` is still a console application. Use PowerShell or Command Prompt when you want to see progress, errors, or the saved output path:
+
+```powershell
+.\RemoveBG.exe "C:\path\to\image.png"
+.\RemoveBG.exe "C:\path\to\folder-with-images"
+```
+
+Current limitations:
+
+- The app reads only the first command-line argument, `sys.argv[1]`.
+- Dropping multiple files or folders may pass multiple paths to the process, but only the first path is processed.
+- If you launch by double-clicking or drag-and-drop, the console window may close after the run finishes. Use PowerShell when you want to see progress, errors, or the saved output path.
+
+### Drag And Drop On Other Operating Systems
+
+| Platform | Current repository behavior |
+| --- | --- |
+| Windows | Supported for one dropped image or one dropped folder when using `RemoveBG.exe`. |
+| Linux | No Linux desktop launcher is included. Desktop drag-and-drop requires packaging with a `.desktop` file whose `Exec` entry includes a file field code such as `%f` or `%F`. Use the terminal for this repository as-is. |
+| macOS | No `.app` bundle is included. Finder/Dock drag-and-drop onto an app requires a macOS app bundle that declares supported document types and handles opened documents. Use the terminal for this repository as-is. |
+
+On Linux or macOS, you can still drag a file or folder into many terminal windows to paste its path, then run the Python command normally.
+
+## Use From Source
+
+EzyBGRemover accepts one positional argument: a file path or a folder path.
 
 Windows PowerShell:
 
 ```powershell
 python main.py "C:\path\to\image.png"
+python main.py "C:\path\to\folder-with-images"
 ```
 
-Linux / macOS:
+Linux and macOS:
 
 ```bash
 python main.py "/path/to/image.png"
-```
-
-## Usage
-
-EzyBGRemover accepts one positional argument: a file path or a folder path.
-
-```bash
-python main.py "<file-or-folder-path>"
-```
-
-With the Windows executable:
-
-```powershell
-.\RemoveBG.exe "<file-or-folder-path>"
+python main.py "/path/to/folder-with-images"
 ```
 
 There are no CLI flags, configuration files, or interactive prompts in the current implementation.
 
-### Single Image
+## Supported Inputs
+
+The current validation logic supports lowercase `.jpg` and `.png` extensions.
+
+| Extension | Status |
+| --- | --- |
+| `.jpg` | Supported |
+| `.png` | Supported |
+| `.jpeg` | Not supported |
+| `.webp` | Not supported |
+| `.bmp` | Not supported |
+| `.JPG`, `.PNG` | Not supported by the current case-sensitive check |
+
+### Single Image Output
+
+Command:
 
 ```powershell
 python main.py "C:\Images\portrait.jpg"
 ```
 
-For an input file named:
-
-```text
-portrait.jpg
-```
-
-The output is:
+Output:
 
 ```text
 portrait_no_bg.png
@@ -159,18 +182,15 @@ portrait_no_bg.png
 
 For single-file processing, the output is saved in the current working directory.
 
-### Folder
+### Folder Output
+
+Command:
 
 ```powershell
 python main.py "C:\Images\ProductShots"
 ```
 
-For folder input, the script:
-
-1. Creates a new output folder using the `_no_bg` suffix.
-2. Processes supported images inside the folder.
-3. Recurses into nested folders.
-4. Saves each result as a PNG file.
+For folder input, the script creates a sibling output folder with `_no_bg` appended and processes supported images recursively.
 
 Example input:
 
@@ -192,66 +212,11 @@ ProductShots_no_bg/
     `-- watch_no_bg.png
 ```
 
-### Supported File Types
-
-The current validation logic supports lowercase `.jpg` and `.png` extensions.
-
-| Extension | Status |
-| --- | --- |
-| `.jpg` | Supported |
-| `.png` | Supported |
-| `.jpeg` | Not supported |
-| `.webp` | Not supported |
-| `.bmp` | Not supported |
-| `.JPG`, `.PNG` | Not supported by the current case-sensitive check |
-
-### Output Behavior
-
-| Input | Output location | Naming |
-| --- | --- | --- |
-| Single image | Current working directory | `<name>_no_bg.png` |
-| Folder | New `<folder>_no_bg` directory | `<name>_no_bg.png` |
-| Nested folder | New nested directory with `_no_bg` suffix | `<name>_no_bg.png` |
-
 Existing files with the same output name are overwritten when Pillow saves the result.
 
-### Executable Drag-and-Drop
+## Build The EXE
 
-The application does not implement a graphical drag-and-drop interface. Any drag-and-drop behavior comes from the operating system launching the executable with dropped item paths as command-line arguments.
-
-The current code reads only `sys.argv[1]`. That means only the first supplied path is processed.
-
-| Platform | Behavior |
-| --- | --- |
-| Windows | Dropping one image or one folder onto `RemoveBG.exe` can launch the executable with that item as the first argument. The app processes that one path. |
-| Windows, multiple items | Not supported by the current app logic. If the shell passes multiple paths, only the first path is processed. |
-| Linux | No `.desktop` launcher or file association is included. Use the terminal command instead. Desktop drag-and-drop would require packaging and an `Exec` entry with file field codes. |
-| macOS | No `.app` bundle is included. Use the terminal command instead. Finder items can be dragged into Terminal to insert their paths, then the command can be run normally. |
-
-Recommended terminal usage remains:
-
-```powershell
-.\RemoveBG.exe "C:\path\to\image-or-folder"
-```
-
-or:
-
-```bash
-python main.py "/path/to/image-or-folder"
-```
-
-### Runtime Notes
-
-- Images are opened with Pillow.
-- Background removal is performed by `rembg.remove(...)`.
-- Progress and output locations are printed to the terminal.
-- Unsupported files are skipped during folder traversal.
-- The first source run may download the `u2net.onnx` model if it is not already present in the rembg model cache.
-- Invalid paths, unreadable images, or model/runtime failures may raise Python exceptions.
-
-## Build From Source
-
-The reproducible Windows build path is `build_app.py`.
+The Windows build path is `build_app.py`.
 
 ### Build Requirements
 
@@ -259,7 +224,7 @@ The reproducible Windows build path is `build_app.py`.
 | --- | --- |
 | Windows | The script is configured to produce `RemoveBG.exe` |
 | Python `>=3.13` | Required by `pyproject.toml` |
-| `uv` | Recommended dependency manager |
+| `uv` | Used to create and sync the environment |
 | Internet access | Required if `u2net.onnx` is not already cached |
 | `assets/RB.png` | Required executable icon |
 
@@ -289,7 +254,7 @@ _pyinstaller_build/
 _pyinstaller_spec/
 ```
 
-### What the Build Script Does
+### What The Build Script Does
 
 `build_app.py`:
 
@@ -354,6 +319,7 @@ EzyBGRemover/
 |-- main.py
 |-- pyproject.toml
 |-- uv.lock
+|-- LICENSE
 |-- _pyinstaller_runtime_hook.py
 |-- RemoveBG.spec
 |-- wewe.spec
@@ -366,12 +332,13 @@ EzyBGRemover/
 | `build_app.py` | Primary PyInstaller build script for `RemoveBG.exe`. |
 | `pyproject.toml` | Project metadata and dependency declarations. |
 | `uv.lock` | Locked dependency resolution generated by `uv`. |
+| `LICENSE` | MIT license for the project. |
 | `assets/RB.png` | Icon used by the Windows executable build. |
 | `_pyinstaller_runtime_hook.py` | Runtime hook that points bundled builds to the included model directory. |
 | `RemoveBG.spec` | PyInstaller spec file present in the repository. |
 | `wewe.spec` | Older PyInstaller spec file present in the repository. |
 
-Generated and local-only directories such as `build/`, `dist/`, `_pyinstaller_build/`, `_pyinstaller_spec/`, `.venv/`, and `__pycache__/` are ignored by the repository configuration.
+Generated and local-only directories such as `build/`, `dist/`, `_pyinstaller_build/`, `_pyinstaller_spec/`, `.venv/`, `.ruff_cache/`, and `__pycache__/` are ignored by the repository configuration.
 
 ## Contributing
 
@@ -383,7 +350,7 @@ git checkout -b feature/your-change
 ```
 
 3. Make the change.
-4. Test with a small image or folder.
+4. Test with a small image and a folder.
 5. Commit with a clear message:
 
 ```bash
@@ -394,6 +361,4 @@ git commit -m "Add support for jpeg images"
 
 ## License
 
-No license file is currently present in this repository.
-
-Without an explicit license, the project is not currently distributed under an open-source license. Add a license file before redistributing, modifying, or using this project beyond personal evaluation.
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
