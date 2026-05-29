@@ -60,7 +60,7 @@ jobs:
 
       - name: Install dependencies
         shell: pwsh
-        run: uv sync --frozen
+        run: uv sync
 
       - name: Build executable
         shell: pwsh
