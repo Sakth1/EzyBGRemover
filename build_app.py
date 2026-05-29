@@ -3,7 +3,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 APP_NAME = "RemoveBG"
 ENTRYPOINT = "main.py"
 ICON_PATH = Path("assets") / "RB.png"
@@ -22,7 +21,9 @@ def u2net_home() -> Path:
     configured_home = os.environ.get("U2NET_HOME")
     if configured_home:
         return Path(configured_home).expanduser().resolve()
-    return (Path(os.environ.get("XDG_DATA_HOME", "~")).expanduser() / ".u2net").resolve()
+    return (
+        Path(os.environ.get("XDG_DATA_HOME", "~")).expanduser() / ".u2net"
+    ).resolve()
 
 
 def ensure_model_file() -> Path:
@@ -35,7 +36,9 @@ def ensure_model_file() -> Path:
 
     downloaded_path = Path(U2netSession.download_models()).resolve()
     if not downloaded_path.exists():
-        raise FileNotFoundError(f"rembg did not create the expected model file: {downloaded_path}")
+        raise FileNotFoundError(
+            f"rembg did not create the expected model file: {downloaded_path}"
+        )
 
     return downloaded_path
 
