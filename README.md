@@ -20,6 +20,7 @@ The repository contains a Python command-line script and a PyInstaller build pat
 - [Use From Source](#use-from-source)
 - [Supported Inputs](#supported-inputs)
 - [Build The EXE](#build-the-exe)
+- [Release The EXE](#release-the-exe)
 - [Technical Notes](#technical-notes)
 - [Project Structure](#project-structure)
 - [Contributing](#contributing)
@@ -313,6 +314,9 @@ The application uses terminal `print(...)` statements for progress and status ou
 
 ```text
 EzyBGRemover/
+|-- .github/
+|   `-- workflows/
+|       `-- release-exe.yml
 |-- assets/
 |   `-- RB.png
 |-- build_app.py
@@ -328,6 +332,7 @@ EzyBGRemover/
 
 | Path | Purpose |
 | --- | --- |
+| `.github/workflows/release-exe.yml` | Manual GitHub Actions workflow that builds and publishes `RemoveBG.exe` for a release tag. |
 | `main.py` | Command-line entry point and image/folder processing logic. |
 | `build_app.py` | Primary PyInstaller build script for `RemoveBG.exe`. |
 | `pyproject.toml` | Project metadata and dependency declarations. |
